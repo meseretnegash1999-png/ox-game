@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Tic Tac Toe Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 50px;
+    }
+    h1 {
+      text-align: center;
+    }
+    #board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 5px;
+    }
+    .cell {
+      background-color: #eee;
+      width: 100px;
+      height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 60px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Tic Tac Toe (OX Game)</h1>
+<div id="board"></div>
+<h2 id="status">Turn: X</h2>
+<button onclick="resetGame()">Restart Game</button>
+
+<script>
+  let board = ["", "", "", "", "", "", "", "", ""];
+  let currentPlayer = "X";
+  let gameOver = false;
+
+  const boardDiv = document.getElementById("board");
+  const statusText = document.getElementById("status");
+
+  // Create cells
+  for (let i = 0; i < 9; i++) {
+    const cell = document.createElement("div");
+    cell.classList.add("cell");
+    cell.addEventListener("click", () => cellClicked(i));
+    boardDiv.appendChild(cell);
+  }
+
+  function cellClicked(index) {
+    if (board[index] !== "" || gameOver) return;
+    board[index] = currentPlayer;
+    boardDiv.children[index].textContent = currentPlayer;
+
+    if (checkWin()) {
+      statusText.textContent = `${currentPlayer} Wins!`;
+      gameOver = true;
+    } else if (board.every(cell => cell !== "")) {
+      statusText.textContent = "Draw!";
+      gameOver = true;
+    } else {
+      currentPlayer = (currentPlayer === "X") ? "O" : "X";
+      statusText.textContent = `Turn: ${currentPlayer}`;
+    }
+  }
+
+  function checkWin() {
+    const winCombos = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+      [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+      [0, 4, 8], [2, 4, 6]            // diagonals
+    ];
+
+    return winCombos.some(combo => {
+      return combo.every(idx => board[idx] === currentPlayer);
+    });
+  }
+
+  function resetGame() {
+    board = ["", "", "", "", "", "", "", "", ""];
+    currentPlayer = "X";
+    gameOver = false;
+    statusText.textContent = "Turn: X";
+    Array.from(boardDiv.children).forEach(cell => (cell.textContent = ""));
+  }
+</script>
+
+</body>
+</html>
